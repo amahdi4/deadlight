@@ -47,10 +47,11 @@ namespace Deadlight.Data
             config.mapName = "Town Center";
             config.mapType = MapType.TownCenter;
             config.description = "Streets, shops, and open plazas. Balanced layout with moderate cover.";
-            config.halfWidth = 24;
-            config.halfHeight = 24;
-            config.perimeterHalfW = 23f;
-            config.perimeterHalfH = 23f;
+            // expanded footprint for stronger map identity
+            config.halfWidth = 30;
+            config.halfHeight = 30;
+            config.perimeterHalfW = 29f;
+            config.perimeterHalfH = 29f;
             config.houseCount = 12;
             config.treeCount = 14;
             config.rockCount = 6;
@@ -83,10 +84,11 @@ namespace Deadlight.Data
             config.mapName = "Industrial District";
             config.mapType = MapType.Industrial;
             config.description = "Warehouses and narrow corridors. Tight chokepoints, limited escape routes.";
-            config.halfWidth = 20;
-            config.halfHeight = 26;
-            config.perimeterHalfW = 19f;
-            config.perimeterHalfH = 25f;
+            // industrial corridor-focused larger map
+            config.halfWidth = 28;
+            config.halfHeight = 36;
+            config.perimeterHalfW = 27f;
+            config.perimeterHalfH = 35f;
             config.houseCount = 14;
             config.treeCount = 3;
             config.rockCount = 10;
@@ -119,10 +121,11 @@ namespace Deadlight.Data
             config.mapName = "Suburban Outskirts";
             config.mapType = MapType.Suburban;
             config.description = "Houses, yards, and wide open spaces. Rewards mobility, less natural cover.";
-            config.halfWidth = 27;
-            config.halfHeight = 22;
-            config.perimeterHalfW = 26f;
-            config.perimeterHalfH = 21f;
+            // suburban: widest playable footprint
+            config.halfWidth = 40;
+            config.halfHeight = 30;
+            config.perimeterHalfW = 39f;
+            config.perimeterHalfH = 29f;
             config.houseCount = 16;
             config.treeCount = 28;
             config.rockCount = 5;

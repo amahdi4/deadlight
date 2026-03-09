@@ -172,7 +172,6 @@ namespace Deadlight.Systems
         {
             if (isLooted) return;
 
-            AnimateGlow();
             AnimateContentsIcon();
 
             if (player == null)
@@ -187,6 +186,12 @@ namespace Deadlight.Systems
 
             if (promptText != null)
                 promptText.gameObject.SetActive(inRange && !isLooting);
+
+            // Only show glow and contents icon when the player is in interaction range
+            if (glowSr != null)
+                glowSr.enabled = inRange && !isLooted;
+            if (contentsIconSr != null)
+                contentsIconSr.enabled = inRange && !isLooted && !isLooting;
 
             if (inRange && Input.GetKey(KeyCode.F) && !isLooted)
             {
@@ -289,7 +294,8 @@ namespace Deadlight.Systems
 
         private void AnimateGlow()
         {
-            if (glowSr == null) return;
+            // pulse only affects color when glow is active (enabled)
+            if (glowSr == null || !glowSr.enabled) return;
             pulseTimer += Time.deltaTime * (tier == CrateTier.Legendary ? 3f : 2f);
             float alpha = Mathf.Lerp(0.15f, tier == CrateTier.Legendary ? 0.7f : 0.5f,
                 (Mathf.Sin(pulseTimer) + 1f) * 0.5f);

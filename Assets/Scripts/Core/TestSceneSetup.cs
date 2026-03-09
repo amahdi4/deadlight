@@ -520,11 +520,15 @@ namespace Deadlight.Core
         private void CreateEnvironment()
         {
             var envParent = new GameObject("Environment");
-            CreateTown(envParent.transform);
+
+            // Use the new MapBuilder to procedurally construct per-map layouts
+            var cfg = activeMapConfig ?? MapConfig.GetConfigForType(MapType.TownCenter);
+            Deadlight.Level.MapBuilder.BuildEnvironment(envParent.transform, cfg, useProceduralSprites);
+
             CreatePerimeter(envParent.transform);
             SpawnLorePickups(envParent.transform);
 
-            MapType mapType = activeMapConfig != null ? activeMapConfig.mapType : MapType.TownCenter;
+            MapType mapType = cfg != null ? cfg.mapType : MapType.TownCenter;
             var landmarksObj = new GameObject("MapLandmarks");
             landmarksObj.transform.SetParent(envParent.transform);
             var landmarks = landmarksObj.AddComponent<Level.MapLandmarks>();
