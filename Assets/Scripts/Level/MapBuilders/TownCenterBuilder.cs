@@ -83,11 +83,11 @@ namespace Deadlight.Level.MapBuilders
                 bench.transform.SetParent(plaza);
                 bench.transform.position = pos;
                 var sr = bench.AddComponent<SpriteRenderer>();
-                sr.sprite = ProceduralSpriteGenerator.CreateCrateSprite();
+                sr.sprite = CreateBenchSprite();
                 sr.sortingOrder = 4;
-                sr.color = new Color(0.5f, 0.34f, 0.22f);
+                sr.color = new Color(0.62f, 0.42f, 0.24f);
                 var col = bench.AddComponent<BoxCollider2D>();
-                col.size = new Vector2(0.9f, 0.35f);
+                col.size = new Vector2(0.75f, 0.24f);
                 RegisterPlacement(pos, new Vector2(0.9f, 0.35f));
             }
 
@@ -105,6 +105,19 @@ namespace Deadlight.Level.MapBuilders
                 {
                     SpawnTree(plaza, pos, false);
                 }
+            }
+
+            Vector3[] plazaPostPositions =
+            {
+                new Vector3(-6.8f, -1f, 0f),
+                new Vector3(6.8f, 1f, 0f),
+                new Vector3(-1f, 6.8f, 0f),
+                new Vector3(1f, -6.8f, 0f)
+            };
+
+            foreach (Vector3 pos in plazaPostPositions)
+            {
+                SpawnStreetPost(plaza, pos);
             }
 
             Vector3[] coverPositions =
@@ -196,8 +209,8 @@ namespace Deadlight.Level.MapBuilders
             if (eastWest)
             {
                 float outerX = center.x + outerSign * 1.9f;
-                SpawnBuilding(block, new Vector3(outerX, center.y + 1.5f, 0f), new Vector2(1.8f, 2.2f), 0, tint, "PlazaShop_A");
-                SpawnBuilding(block, new Vector3(outerX, center.y - 1.5f, 0f), new Vector2(1.8f, 2.1f), 1, ShiftTint(tint, -0.05f), "PlazaShop_B");
+                SpawnBuilding(block, new Vector3(outerX, center.y + 1.5f, 0f), 0, tint, "PlazaShop_A");
+                SpawnBuilding(block, new Vector3(outerX, center.y - 1.5f, 0f), 1, ShiftTint(tint, -0.05f), "PlazaShop_B");
                 SpawnBarrel(block, center + new Vector3(-outerSign * 0.8f, 1.2f, 0f), false);
                 SpawnRock(block, center + new Vector3(-outerSign * 0.9f, -1.2f, 0f));
                 if (TryPlace(center + new Vector3(-outerSign * 2.2f, 0f, 0f), new Vector2(0.75f, 0.75f)))
@@ -208,8 +221,8 @@ namespace Deadlight.Level.MapBuilders
             else
             {
                 float outerY = center.y + outerSign * 1.9f;
-                SpawnBuilding(block, new Vector3(center.x - 1.5f, outerY, 0f), new Vector2(1.8f, 2.1f), 0, tint, "PlazaShop_A");
-                SpawnBuilding(block, new Vector3(center.x + 1.5f, outerY, 0f), new Vector2(1.8f, 2.2f), 1, ShiftTint(tint, -0.05f), "PlazaShop_B");
+                SpawnBuilding(block, new Vector3(center.x - 1.5f, outerY, 0f), 0, tint, "PlazaShop_A");
+                SpawnBuilding(block, new Vector3(center.x + 1.5f, outerY, 0f), 1, ShiftTint(tint, -0.05f), "PlazaShop_B");
                 SpawnBarrel(block, center + new Vector3(1f, -outerSign * 0.8f, 0f), false);
                 SpawnRock(block, center + new Vector3(-1.1f, -outerSign * 0.9f, 0f));
                 if (TryPlace(center + new Vector3(0f, -outerSign * 2.2f, 0f), new Vector2(0.75f, 0.75f)))
@@ -224,15 +237,15 @@ namespace Deadlight.Level.MapBuilders
             bool horizontal = Random.value > 0.5f;
             if (horizontal)
             {
-                SpawnBuilding(block, center + new Vector3(-1.9f, 1.9f, 0f), new Vector2(1.8f, 2.2f), Random.Range(0, 3), tint, "Cafe");
-                SpawnBuilding(block, center + new Vector3(1.5f, -1.4f, 0f), new Vector2(2.5f, 2f), Random.Range(0, 3), ShiftTint(tint, 0.03f), "RowStore");
+                SpawnBuilding(block, center + new Vector3(-1.9f, 1.9f, 0f), Random.Range(0, 3), tint, "Cafe");
+                SpawnBuilding(block, center + new Vector3(1.5f, -1.4f, 0f), Random.Range(0, 3), ShiftTint(tint, 0.03f), "RowStore");
                 SpawnBarrel(block, center + new Vector3(2.4f, -2.2f, 0f), false);
                 SpawnBarrel(block, center + new Vector3(2f, 1.6f, 0f), false);
             }
             else
             {
-                SpawnBuilding(block, center + new Vector3(1.7f, 1.8f, 0f), new Vector2(1.8f, 2.2f), Random.Range(0, 3), ShiftTint(tint, -0.04f), "CornerShop");
-                SpawnBuilding(block, center + new Vector3(-1.2f, -1.7f, 0f), new Vector2(2.4f, 2.1f), Random.Range(0, 3), tint, "RowStore");
+                SpawnBuilding(block, center + new Vector3(1.7f, 1.8f, 0f), Random.Range(0, 3), ShiftTint(tint, -0.04f), "CornerShop");
+                SpawnBuilding(block, center + new Vector3(-1.2f, -1.7f, 0f), Random.Range(0, 3), tint, "RowStore");
                 SpawnBarrel(block, center + new Vector3(-2.3f, -2.1f, 0f), false);
                 SpawnBarrel(block, center + new Vector3(-2f, 1.4f, 0f), false);
             }
@@ -248,13 +261,13 @@ namespace Deadlight.Level.MapBuilders
             bool horizontal = Mathf.Abs(center.x) > Mathf.Abs(center.y);
             if (horizontal)
             {
-                SpawnBuilding(block, center + new Vector3(-2.4f, 0f, 0f), new Vector2(1.8f, 2.2f), 0, tint, "CourtWest");
-                SpawnBuilding(block, center + new Vector3(1.7f, 2f, 0f), new Vector2(2.3f, 2f), 2, ShiftTint(tint, 0.03f), "CourtNorth");
+                SpawnBuilding(block, center + new Vector3(-2.4f, 0f, 0f), 0, tint, "CourtWest");
+                SpawnBuilding(block, center + new Vector3(1.7f, 2f, 0f), 2, ShiftTint(tint, 0.03f), "CourtNorth");
             }
             else
             {
-                SpawnBuilding(block, center + new Vector3(0f, 2.4f, 0f), new Vector2(2.4f, 2f), 0, tint, "CourtNorth");
-                SpawnBuilding(block, center + new Vector3(-2.2f, -0.8f, 0f), new Vector2(1.7f, 2.2f), 2, ShiftTint(tint, 0.03f), "CourtWest");
+                SpawnBuilding(block, center + new Vector3(0f, 2.4f, 0f), 0, tint, "CourtNorth");
+                SpawnBuilding(block, center + new Vector3(-2.2f, -0.8f, 0f), 2, ShiftTint(tint, 0.03f), "CourtWest");
             }
 
             SpawnRock(block, center + new Vector3(0.2f, 0.4f, 0f));
@@ -271,12 +284,12 @@ namespace Deadlight.Level.MapBuilders
             if (northSouth)
             {
                 float buildingY = center.y - Mathf.Sign(center.y == 0f ? 1f : center.y) * 2.2f;
-                SpawnBuilding(block, new Vector3(center.x, buildingY, 0f), new Vector2(2.4f, 2f), 1, tint, "ParkShop_A");
+                SpawnBuilding(block, new Vector3(center.x, buildingY, 0f), 1, tint, "ParkShop_A");
             }
             else
             {
                 float buildingX = center.x - Mathf.Sign(center.x) * 2.2f;
-                SpawnBuilding(block, new Vector3(buildingX, center.y, 0f), new Vector2(2.4f, 2f), 1, tint, "ParkShop_A");
+                SpawnBuilding(block, new Vector3(buildingX, center.y, 0f), 1, tint, "ParkShop_A");
             }
 
             Vector3[] parkPositions =
@@ -319,7 +332,7 @@ namespace Deadlight.Level.MapBuilders
 
             if (Random.value > 0.45f)
             {
-                SpawnBuilding(block, center + new Vector3(0f, 2.5f, 0f), new Vector2(2.5f, 1.9f), Random.Range(0, 3), tint, "LotShops");
+                SpawnBuilding(block, center + new Vector3(0f, 2.5f, 0f), Random.Range(0, 3), tint, "LotShops");
             }
 
             SpawnDumpster(block, center + new Vector3(0f, -2.4f, 0f));
@@ -328,7 +341,7 @@ namespace Deadlight.Level.MapBuilders
 
         private void BuildServiceYardBlock(Transform block, Vector3 center, Color tint)
         {
-            SpawnBuilding(block, center + new Vector3(-2.1f, 1.9f, 0f), new Vector2(1.8f, 2.2f), 2, tint, "ServiceShop");
+            SpawnBuilding(block, center + new Vector3(-2.1f, 1.9f, 0f), 2, tint, "ServiceShop");
 
             Color fenceTint = new Color(0.44f, 0.42f, 0.4f);
             SpawnFence(block, center + new Vector3(-2.8f, -0.8f, 0f), center + new Vector3(2.5f, -0.8f, 0f), fenceTint);
@@ -345,7 +358,7 @@ namespace Deadlight.Level.MapBuilders
 
         private void BuildCivicBlock(Transform block, Vector3 center, Color tint)
         {
-            SpawnBuilding(block, center + new Vector3(0f, 2f, 0f), new Vector2(3.1f, 2.1f), 2, ShiftTint(tint, 0.08f), "CivicHall");
+            SpawnBuilding(block, center + new Vector3(0f, 2f, 0f), 2, ShiftTint(tint, 0.08f), "CivicHall");
 
             if (TryPlace(center + new Vector3(1.4f, -0.6f, 0f), new Vector2(1.8f, 1f)))
             {
@@ -361,7 +374,7 @@ namespace Deadlight.Level.MapBuilders
 
         private void BuildFuelBlock(Transform block, Vector3 center, Color tint)
         {
-            SpawnBuilding(block, center + new Vector3(-1.8f, 2.1f, 0f), new Vector2(2.1f, 2.2f), 1, ShiftTint(tint, -0.02f), "ServiceStore");
+            SpawnBuilding(block, center + new Vector3(-1.8f, 2.1f, 0f), 1, ShiftTint(tint, -0.02f), "ServiceStore");
 
             if (TryPlace(center + new Vector3(-1.3f, -0.2f, 0f), new Vector2(1.8f, 1f)))
             {
@@ -382,7 +395,7 @@ namespace Deadlight.Level.MapBuilders
 
         private void BuildCheckpointBlock(Transform block, Vector3 center, Color tint)
         {
-            SpawnBuilding(block, center + new Vector3(2.1f, 1.9f, 0f), new Vector2(1.8f, 2.1f), 2, ShiftTint(tint, -0.06f), "Barracks");
+            SpawnBuilding(block, center + new Vector3(2.1f, 1.9f, 0f), 2, ShiftTint(tint, -0.06f), "Barracks");
 
             Color fenceTint = new Color(0.5f, 0.47f, 0.42f);
             SpawnFence(block, center + new Vector3(-2.8f, 0f, 0f), center + new Vector3(0.8f, 0f, 0f), fenceTint);
@@ -395,7 +408,7 @@ namespace Deadlight.Level.MapBuilders
             float sideSign = center.x < 0f ? -1f : 1f;
             if (Mathf.Abs(center.x) > 5.1f)
             {
-                SpawnBuilding(block, center + new Vector3(2f * sideSign, -1.8f, 0f), new Vector2(1.8f, 2.2f), Random.Range(0, 3), tint, "CornerBuilding");
+                SpawnBuilding(block, center + new Vector3(2f * sideSign, -1.8f, 0f), Random.Range(0, 3), tint, "CornerBuilding");
             }
 
             if (TryPlace(center + new Vector3(2f * sideSign, 0.1f, 0f), new Vector2(1.8f, 1f)))
@@ -577,7 +590,6 @@ namespace Deadlight.Level.MapBuilders
             var pockets = new GameObject("DeadEnds").transform;
             pockets.SetParent(root);
 
-            Color fenceTint = new Color(0.48f, 0.44f, 0.38f);
             Vector3[] deadEndSpots =
             {
                 new Vector3(-hw + 5f, hh * 0.55f, 0f),
@@ -594,11 +606,6 @@ namespace Deadlight.Level.MapBuilders
                 bool openRight = spot.x < 0f;
                 float sign = openRight ? 1f : -1f;
                 float width = 3.2f;
-                float depth = 4f;
-
-                SpawnFence(pocket, spot + new Vector3(-width * sign, depth, 0f), spot + new Vector3(-width * sign, -depth, 0f), fenceTint);
-                SpawnFence(pocket, spot + new Vector3(-width * sign, depth, 0f), spot + new Vector3(0f, depth, 0f), fenceTint);
-                SpawnFence(pocket, spot + new Vector3(-width * sign, -depth, 0f), spot + new Vector3(0f, -depth, 0f), fenceTint);
 
                 SpawnBarrel(pocket, spot + new Vector3(-width * sign * 0.8f, -1.6f, 0f), false);
                 SpawnDumpster(pocket, spot + new Vector3(-width * sign * 0.35f, 1.7f, 0f));
@@ -770,6 +777,42 @@ namespace Deadlight.Level.MapBuilders
             var sr = post.AddComponent<SpriteRenderer>();
             sr.sprite = ProceduralSpriteGenerator.CreateStreetPostSprite();
             sr.sortingOrder = Mathf.RoundToInt(-pos.y) + 2;
+        }
+
+        private Sprite CreateBenchSprite()
+        {
+            const int w = 20;
+            const int h = 10;
+            var texture = new Texture2D(w, h);
+            var pixels = new Color[w * h];
+            Color wood = new Color(0.56f, 0.34f, 0.2f);
+            Color metal = new Color(0.28f, 0.3f, 0.34f);
+
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                pixels[i] = Color.clear;
+            }
+
+            FillRect(pixels, w, 2, 4, 16, 2, wood);
+            FillRect(pixels, w, 3, 6, 14, 2, wood * 0.92f);
+            FillRect(pixels, w, 5, 1, 2, 3, metal);
+            FillRect(pixels, w, 13, 1, 2, 3, metal);
+
+            texture.SetPixels(pixels);
+            texture.Apply();
+            texture.filterMode = FilterMode.Point;
+            return Sprite.Create(texture, new Rect(0, 0, w, h), new Vector2(0.5f, 0.2f), 10f);
+        }
+
+        private void FillRect(Color[] pixels, int width, int x, int y, int rectWidth, int rectHeight, Color color)
+        {
+            for (int yy = y; yy < y + rectHeight; yy++)
+            {
+                for (int xx = x; xx < x + rectWidth; xx++)
+                {
+                    pixels[yy * width + xx] = color;
+                }
+            }
         }
 
         private Color GetBuildingTint(TownCenterBlockStyle style, Vector3 center)

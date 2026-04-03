@@ -710,18 +710,45 @@ namespace Deadlight.Visuals
             var texture = new Texture2D(width, height);
             texture.filterMode = FilterMode.Point;
 
+            Color postColor = new Color(0.42f, 0.38f, 0.32f);
+            Color railColor = new Color(0.52f, 0.48f, 0.42f);
+            Color wireColor = new Color(0.5f, 0.48f, 0.44f, 0.3f);
+
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    float noise = Mathf.PerlinNoise(x * 0.2f, y * 0.2f);
-                    Color col = Color.Lerp(Palette.Concrete, new Color(0.4f, 0.4f, 0.42f), noise * 0.3f);
-                    
-                    if ((horizontal && (y == 0 || y == height - 1)) || (!horizontal && (x == 0 || x == width - 1)))
+                    Color col = Color.clear;
+
+                    if (horizontal)
                     {
-                        col = Color.Lerp(col, Color.black, 0.2f);
+                        bool isPost = (x % 8 < 2) || x >= width - 1;
+                        bool isTopRail = y >= height - 2;
+                        bool isBottomRail = y <= 1;
+                        bool isMidRail = y == height / 2 || y == height / 2 - 1;
+
+                        if (isPost)
+                            col = postColor;
+                        else if (isTopRail || isBottomRail || isMidRail)
+                            col = railColor;
+                        else
+                            col = wireColor;
                     }
-                    
+                    else
+                    {
+                        bool isPost = (y % 8 < 2) || y >= height - 1;
+                        bool isLeftRail = x <= 1;
+                        bool isRightRail = x >= width - 2;
+                        bool isMidRail = x == width / 2 || x == width / 2 - 1;
+
+                        if (isPost)
+                            col = postColor;
+                        else if (isLeftRail || isRightRail || isMidRail)
+                            col = railColor;
+                        else
+                            col = wireColor;
+                    }
+
                     texture.SetPixel(x, y, col);
                 }
             }

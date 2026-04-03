@@ -16,6 +16,7 @@ namespace Deadlight.UI
         private Text nightText;
         private Text enemyCountText;
         private Text statusText;
+        private GameObject statusPanel;
         private Text reloadHint;
         private Text dayTimerText;
         private Text pointsText;
@@ -52,9 +53,15 @@ namespace Deadlight.UI
             nightText = night;
             enemyCountText = enemyCount;
             statusText = status;
+            statusPanel = status != null ? status.transform.parent.gameObject : null;
             reloadHint = reload;
             dayTimerText = dayTimer;
             pointsText = points;
+
+            if (statusPanel != null)
+            {
+                statusPanel.SetActive(false);
+            }
 
             ConfigureHealthBar();
             ApplyHealthBar(displayedHealthRatio);
@@ -278,7 +285,7 @@ namespace Deadlight.UI
         private void UpdateWave(int wave)
         {
             if (waveText != null)
-                waveText.text = $"Wave {wave}";
+                waveText.text = $"WAVE {wave:00}";
 
             ShowStatus($"WAVE {wave} INCOMING!", 2f);
         }
@@ -286,13 +293,13 @@ namespace Deadlight.UI
         private void UpdateNight(int night)
         {
             if (nightText != null)
-                nightText.text = $"Night {night}";
+                nightText.text = $"NIGHT {night:00}";
         }
 
         private void UpdateEnemyCount(int count)
         {
             if (enemyCountText != null)
-                enemyCountText.text = $"Enemies: {count}";
+                enemyCountText.text = count.ToString("00");
         }
 
         private void UpdateDayTimer(float timeRemaining)
@@ -302,7 +309,7 @@ namespace Deadlight.UI
             {
                 int mins = Mathf.FloorToInt(timeRemaining / 60f);
                 int secs = Mathf.FloorToInt(timeRemaining % 60f);
-                dayTimerText.text = $"Day ends in {mins}:{secs:00}";
+                dayTimerText.text = $"{mins:00}:{secs:00}";
                 dayTimerText.gameObject.SetActive(true);
             }
             else
@@ -314,7 +321,7 @@ namespace Deadlight.UI
         private void UpdatePoints(int points)
         {
             if (pointsText != null)
-                pointsText.text = $"Score: {points}";
+                pointsText.text = points.ToString();
         }
 
         private void UpdateWeaponDisplay(WeaponData weapon)
@@ -393,6 +400,11 @@ namespace Deadlight.UI
 
         private IEnumerator StatusRoutine(string text, float duration)
         {
+            if (statusPanel != null)
+            {
+                statusPanel.SetActive(true);
+            }
+
             statusText.text = text;
             statusText.gameObject.SetActive(true);
             
@@ -417,6 +429,10 @@ namespace Deadlight.UI
             }
 
             statusText.gameObject.SetActive(false);
+            if (statusPanel != null)
+            {
+                statusPanel.SetActive(false);
+            }
         }
     }
 }

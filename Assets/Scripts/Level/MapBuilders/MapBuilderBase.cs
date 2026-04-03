@@ -126,13 +126,9 @@ namespace Deadlight.Level.MapBuilders
 
         // ---- Shared spawn helpers ----
 
-        protected GameObject SpawnBuilding(Transform parent, Vector3 pos, Vector2 colliderSize, int variant, Color tint, string label = "Building", bool registerPlacement = true)
+        protected GameObject SpawnBuilding(Transform parent, Vector3 pos, int variant, Color tint, string label = "Building", bool registerPlacement = true)
         {
             pos = Clamp(pos);
-            if (registerPlacement)
-            {
-                RegisterPlacement(pos, colliderSize);
-            }
             var obj = new GameObject(label);
             obj.transform.SetParent(parent);
             obj.transform.position = pos;
@@ -141,7 +137,32 @@ namespace Deadlight.Level.MapBuilders
             sr.sortingOrder = Mathf.RoundToInt(-pos.y);
             sr.color = tint;
             var col = obj.AddComponent<BoxCollider2D>();
-            MapFootprintCollider.ApplyBaseFootprint(col, colliderSize);
+            MapFootprintCollider.ApplyFromSprite(col);
+            if (registerPlacement)
+            {
+                RegisterPlacement(pos, MapFootprintCollider.GetSpriteSize(sr));
+            }
+            return obj;
+        }
+
+        protected GameObject SpawnCrate(Transform parent, Vector3 pos, bool registerPlacement = true)
+        {
+            pos = Clamp(pos);
+            if (registerPlacement)
+            {
+                RegisterPlacement(pos, new Vector2(0.9f, 0.9f));
+            }
+            var obj = new GameObject("Crate");
+            obj.transform.SetParent(parent);
+            obj.transform.position = pos;
+            var sr = obj.AddComponent<SpriteRenderer>();
+            sr.sprite = ProceduralSpriteGenerator.CreateCrateSprite();
+            sr.sortingOrder = Mathf.RoundToInt(-pos.y);
+            if (registerPlacement)
+            {
+                var col = obj.AddComponent<BoxCollider2D>();
+                col.size = new Vector2(0.8f, 0.8f);
+            }
             return obj;
         }
 
@@ -210,27 +231,6 @@ namespace Deadlight.Level.MapBuilders
             return obj;
         }
 
-        protected GameObject SpawnCrate(Transform parent, Vector3 pos, bool registerPlacement = true)
-        {
-            pos = Clamp(pos);
-            if (registerPlacement)
-            {
-                RegisterPlacement(pos, new Vector2(0.9f, 0.9f));
-            }
-            var obj = new GameObject("Crate");
-            obj.transform.SetParent(parent);
-            obj.transform.position = pos;
-            var sr = obj.AddComponent<SpriteRenderer>();
-            sr.sprite = ProceduralSpriteGenerator.CreateCrateSprite();
-            sr.sortingOrder = Mathf.RoundToInt(-pos.y);
-            if (registerPlacement)
-            {
-                var col = obj.AddComponent<BoxCollider2D>();
-                col.size = new Vector2(0.8f, 0.8f);
-            }
-            return obj;
-        }
-
         protected GameObject SpawnBarrel(Transform parent, Vector3 pos, bool explosive = false, bool registerPlacement = true)
         {
             pos = Clamp(pos);
@@ -294,7 +294,7 @@ namespace Deadlight.Level.MapBuilders
                 fence.transform.position = segCenter;
                 fence.transform.rotation = Quaternion.Euler(0, 0, angle);
                 var sr = fence.AddComponent<SpriteRenderer>();
-                sr.sprite = ProceduralSpriteGenerator.CreateWallSprite(true, Mathf.RoundToInt(segLen * 8));
+                sr.sprite = ProceduralSpriteGenerator.CreateWallSprite(true, Mathf.RoundToInt(segLen * 32));
                 sr.sortingOrder = Mathf.RoundToInt(-segCenter.y);
                 sr.color = tint;
                 if (hasCollider)
@@ -304,7 +304,7 @@ namespace Deadlight.Level.MapBuilders
                         RegisterPlacement(segCenter, new Vector2(segLen, 0.35f));
                     }
                     var col = fence.AddComponent<BoxCollider2D>();
-                    col.size = new Vector2(segLen, 0.2f);
+                    col.size = new Vector2(segLen, 0.35f);
                 }
                 if (first == null) first = fence;
             }

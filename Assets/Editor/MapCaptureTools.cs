@@ -10,6 +10,7 @@ using Deadlight.Visuals;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Deadlight.Editor
 {
@@ -139,6 +140,12 @@ namespace Deadlight.Editor
 
         private static void CaptureMap(MapType mapType, string mapFolderName, IReadOnlyList<CaptureView> views)
         {
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+            {
+                throw new System.InvalidOperationException(
+                    "Map captures require an active graphics device. Re-run Unity batchmode without -nographics.");
+            }
+
             string projectRoot = Directory.GetParent(Application.dataPath)?.FullName ?? ".";
             string outputDir = Path.Combine(projectRoot, "Artifacts", "MapCaptures", mapFolderName);
             Directory.CreateDirectory(outputDir);

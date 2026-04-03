@@ -52,7 +52,7 @@ namespace Deadlight.Level.MapBuilders
             var heliBody = CreateSpriteObject(crashSite, "HelicopterBody", CreateHelicopterSprite(), Vector3.zero, 5);
             heliBody.transform.rotation = Quaternion.Euler(0f, 0f, 25f);
             var bodyCollider = heliBody.AddComponent<BoxCollider2D>();
-            bodyCollider.size = new Vector2(3f, 1.2f);
+            MapFootprintCollider.ApplyFromSprite(bodyCollider);
 
             var fireEffect = new GameObject("Fire");
             fireEffect.transform.SetParent(crashSite);
@@ -81,6 +81,10 @@ namespace Deadlight.Level.MapBuilders
             checkpoint.SetParent(parent);
             checkpoint.position = position;
 
+            var booth = CreateSpriteObject(checkpoint, "GuardBooth", CreateGuardBoothSprite(), new Vector3(-2.4f, 0.3f, 0f), 4);
+            var boothCollider = booth.AddComponent<BoxCollider2D>();
+            MapFootprintCollider.ApplyFromSprite(boothCollider);
+
             var barrierBase = CreateSpriteObject(checkpoint, "BarrierBase", CreateCheckpointBarrierBaseSprite(), new Vector3(0.2f, 1.1f, 0f), 4);
             var barrierBaseCol = barrierBase.AddComponent<BoxCollider2D>();
             barrierBaseCol.size = new Vector2(2.2f, 0.45f);
@@ -96,8 +100,18 @@ namespace Deadlight.Level.MapBuilders
 
             var ammo = CreateSpriteObject(checkpoint, "AmmoCase", ProceduralSpriteGenerator.CreateCrateSprite(), new Vector3(-2f, -1f, 0f), 4);
             ammo.GetComponent<SpriteRenderer>().color = new Color(0.38f, 0.48f, 0.3f);
+            var ammoSecondary = CreateSpriteObject(checkpoint, "AmmoCase_Back", ProceduralSpriteGenerator.CreateCrateSprite(), new Vector3(-0.8f, -1.45f, 0f), 3);
+            ammoSecondary.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+            ammoSecondary.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.36f, 0.28f);
 
             CreateSpriteObject(checkpoint, "CheckpointPost", CreateCheckpointPostSprite(), new Vector3(2.4f, -0.2f, 0f), 4);
+
+            var flood = CreateSpriteObject(checkpoint, "Floodlight", CreateStreetlightSprite(), new Vector3(2.9f, 0.5f, 0f), 4);
+            var floodCollider = flood.AddComponent<CircleCollider2D>();
+            floodCollider.radius = 0.12f;
+
+            var glow = CreateSpriteObject(checkpoint, "FloodGlow", CreateGlowSprite(new Color(1f, 0.9f, 0.65f, 0.22f)), new Vector3(2.9f, 1.55f, 0f), -20);
+            glow.transform.localScale = Vector3.one * 2.2f;
         }
 
         private static void CreateGasStation(Transform parent, Vector3 position)
@@ -108,7 +122,7 @@ namespace Deadlight.Level.MapBuilders
 
             var canopy = CreateSpriteObject(station, "Canopy", CreateCanopySprite(), Vector3.zero, 6);
             var canopyCollider = canopy.AddComponent<BoxCollider2D>();
-            MapFootprintCollider.ApplyCenteredFootprint(canopyCollider, new Vector2(3f, 1.5f), 0.82f, 0.22f, 0.02f, 0.28f);
+            MapFootprintCollider.ApplyFromSprite(canopyCollider, 0.9f, 0.25f, 0.3f);
 
             var sign = CreateSpriteObject(station, "NeonSign", CreateNeonSignSprite(), new Vector3(0f, 1.5f, 0f), 7);
             sign.AddComponent<FlickeringLight>();
@@ -124,7 +138,7 @@ namespace Deadlight.Level.MapBuilders
 
             var building = CreateSpriteObject(diner, "Building", CreateDinerSprite(), Vector3.zero, 5);
             var buildingCollider = building.AddComponent<BoxCollider2D>();
-            MapFootprintCollider.ApplyCenteredFootprint(buildingCollider, new Vector2(3f, 2f), 0.9f, 0.42f, 0.03f, 0.55f);
+            MapFootprintCollider.ApplyFromSprite(buildingCollider);
 
             var sign = CreateSpriteObject(diner, "NeonSign", CreateDinerSignSprite(), new Vector3(0f, 1.2f, 0f), 6);
             sign.AddComponent<FlickeringLight>();
@@ -138,7 +152,7 @@ namespace Deadlight.Level.MapBuilders
 
             var building = CreateSpriteObject(school, "Building", CreateSchoolSprite(), Vector3.zero, 5);
             var buildingCollider = building.AddComponent<BoxCollider2D>();
-            MapFootprintCollider.ApplyBaseFootprint(buildingCollider, new Vector2(4.8f, 2.6f), 0.9f, 0.42f, 0.04f, 0.72f);
+            MapFootprintCollider.ApplyFromSprite(buildingCollider);
 
             var bus = CreateSpriteObject(school, "SchoolBus", CreateSchoolBusSprite(), new Vector3(-2.2f, -1.1f, 0f), 4);
             bus.transform.localScale = new Vector3(0.6f, 0.6f, 1f);
@@ -154,7 +168,7 @@ namespace Deadlight.Level.MapBuilders
 
             var building = CreateSpriteObject(hospital, "Building", CreateHospitalSprite(), Vector3.zero, 5);
             var buildingCollider = building.AddComponent<BoxCollider2D>();
-            MapFootprintCollider.ApplyBaseFootprint(buildingCollider, new Vector2(5.2f, 2.7f), 0.9f, 0.42f, 0.04f, 0.76f);
+            MapFootprintCollider.ApplyFromSprite(buildingCollider);
 
             CreateSpriteObject(hospital, "Ambulance", CreateAmbulanceSprite(), new Vector3(-2.2f, -1.1f, 0f), 4);
             CreateSpriteObject(hospital, "EmergencySign", CreateHospitalSignSprite(), new Vector3(2.5f, -1f, 0f), 5);
@@ -856,6 +870,51 @@ namespace Deadlight.Level.MapBuilders
             tex.Apply();
             tex.filterMode = FilterMode.Point;
             return Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0.25f), 16f);
+        }
+
+        private static Sprite CreateGuardBoothSprite()
+        {
+            const int w = 24;
+            const int h = 24;
+            var tex = new Texture2D(w, h);
+            var pixels = new Color[w * h];
+            Color wall = new Color(0.56f, 0.56f, 0.6f);
+            Color roof = new Color(0.24f, 0.24f, 0.28f);
+            Color window = new Color(0.65f, 0.84f, 0.96f);
+
+            for (int y = 2; y < 18; y++)
+            {
+                for (int x = 2; x < 22; x++)
+                {
+                    pixels[y * w + x] = wall;
+                }
+            }
+
+            for (int y = 18; y < 22; y++)
+            {
+                for (int x = 0; x < 24; x++)
+                {
+                    pixels[y * w + x] = roof;
+                }
+            }
+
+            for (int y = 7; y < 13; y++)
+            {
+                for (int x = 5; x < 11; x++)
+                {
+                    pixels[y * w + x] = window;
+                }
+
+                for (int x = 13; x < 19; x++)
+                {
+                    pixels[y * w + x] = window;
+                }
+            }
+
+            tex.SetPixels(pixels);
+            tex.Apply();
+            tex.filterMode = FilterMode.Point;
+            return Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0.2f), 16f);
         }
 
         private static Sprite CreateGlowSprite(Color glowColor)

@@ -28,7 +28,7 @@ namespace Deadlight.Level.MapBuilders
             var body = CreateSpriteObject(crash, "HelicopterBody", CreateHelicopterSprite(), Vector3.zero, 6);
             body.transform.rotation = Quaternion.Euler(0f, 0f, 18f);
             var bodyCollider = body.AddComponent<BoxCollider2D>();
-            bodyCollider.size = new Vector2(3.1f, 1.3f);
+            MapFootprintCollider.ApplyFromSprite(bodyCollider);
 
             var fire = new GameObject("Fire");
             fire.transform.SetParent(crash);
@@ -56,7 +56,7 @@ namespace Deadlight.Level.MapBuilders
 
             var building = CreateSpriteObject(lab, "LabBuilding", CreateLabBuildingSprite(), Vector3.zero, 6);
             var collider = building.AddComponent<BoxCollider2D>();
-            MapFootprintCollider.ApplyBaseFootprint(collider, new Vector2(5.2f, 2.7f), 0.9f, 0.42f, 0.04f, 0.75f);
+            MapFootprintCollider.ApplyFromSprite(collider);
 
             var glow = CreateSpriteObject(lab, "EerieGlow", CreateGlowSprite(new Color(0.28f, 0.88f, 0.4f, 0.28f)), new Vector3(0f, -0.2f, 0f), 4);
             glow.transform.localScale = Vector3.one * 2.4f;
@@ -64,6 +64,24 @@ namespace Deadlight.Level.MapBuilders
 
             CreateSpriteObject(lab, "HazardSign", CreateHazardSignSprite(), new Vector3(3f, 0.35f, 0f), 7);
             CreateSpriteObject(lab, "HazardSign", CreateHazardSignSprite(), new Vector3(-3f, 0.35f, 0f), 7);
+
+            var crateLeft = CreateSpriteObject(lab, "SupplyCrate_Left", ProceduralSpriteGenerator.CreateCrateSprite(), new Vector3(-3.1f, -1.25f, 0f), 5);
+            crateLeft.transform.localScale = new Vector3(0.85f, 0.85f, 1f);
+            crateLeft.GetComponent<SpriteRenderer>().color = new Color(0.34f, 0.36f, 0.3f);
+
+            var crateRight = CreateSpriteObject(lab, "SupplyCrate_Right", ProceduralSpriteGenerator.CreateCrateSprite(), new Vector3(3.1f, -1.25f, 0f), 5);
+            crateRight.transform.localScale = new Vector3(0.85f, 0.85f, 1f);
+            crateRight.GetComponent<SpriteRenderer>().color = new Color(0.34f, 0.36f, 0.3f);
+
+            var lampLeft = CreateSpriteObject(lab, "LampLeft", CreateStreetlightSprite(), new Vector3(-4.2f, 0.2f, 0f), 4);
+            lampLeft.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
+            var lampRight = CreateSpriteObject(lab, "LampRight", CreateStreetlightSprite(), new Vector3(4.2f, 0.2f, 0f), 4);
+            lampRight.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
+
+            var lampGlowLeft = CreateSpriteObject(lab, "LampGlowLeft", CreateGlowSprite(new Color(1f, 0.92f, 0.66f, 0.18f)), new Vector3(-4.2f, 1.05f, 0f), 1);
+            lampGlowLeft.transform.localScale = Vector3.one * 1.8f;
+            var lampGlowRight = CreateSpriteObject(lab, "LampGlowRight", CreateGlowSprite(new Color(1f, 0.92f, 0.66f, 0.18f)), new Vector3(4.2f, 1.05f, 0f), 1);
+            lampGlowRight.transform.localScale = Vector3.one * 1.8f;
         }
 
         private static void CreateFuelDepot(Transform parent, Vector3 position)
@@ -74,11 +92,11 @@ namespace Deadlight.Level.MapBuilders
 
             var tankA = CreateSpriteObject(depot, "FuelTank", CreateFuelTankSprite(), new Vector3(-1.3f, 0.3f, 0f), 5);
             var tankACol = tankA.AddComponent<BoxCollider2D>();
-            tankACol.size = new Vector2(2.2f, 1.3f);
+            MapFootprintCollider.ApplyFromSprite(tankACol);
 
             var tankB = CreateSpriteObject(depot, "FuelTank", CreateFuelTankSprite(), new Vector3(1.4f, 0.3f, 0f), 5);
             var tankBCol = tankB.AddComponent<BoxCollider2D>();
-            tankBCol.size = new Vector2(2.2f, 1.3f);
+            MapFootprintCollider.ApplyFromSprite(tankBCol);
 
             var pump = CreateSpriteObject(depot, "FuelPump", CreateFuelPumpSprite(), new Vector3(-2.6f, -1f, 0f), 6);
             var pumpCol = pump.AddComponent<BoxCollider2D>();
@@ -95,7 +113,7 @@ namespace Deadlight.Level.MapBuilders
 
             var platform = CreateSpriteObject(dock, "Platform", CreatePlatformSprite(), Vector3.zero, 5);
             var collider = platform.AddComponent<BoxCollider2D>();
-            collider.size = new Vector2(4.8f, 1.7f);
+            MapFootprintCollider.ApplyFromSprite(collider);
 
             CreateSpriteObject(dock, "DockCrate", ProceduralSpriteGenerator.CreateCrateSprite(), new Vector3(-1.6f, -0.8f, 0f), 6);
             CreateSpriteObject(dock, "DockCrate", ProceduralSpriteGenerator.CreateCrateSprite(), new Vector3(0f, -0.8f, 0f), 6);
@@ -110,7 +128,7 @@ namespace Deadlight.Level.MapBuilders
 
             var building = CreateSpriteObject(office, "OfficeBuilding", CreateOfficeBuildingSprite(), Vector3.zero, 6);
             var collider = building.AddComponent<BoxCollider2D>();
-            MapFootprintCollider.ApplyBaseFootprint(collider, new Vector2(3.6f, 2.7f), 0.9f, 0.42f, 0.04f, 0.7f);
+            MapFootprintCollider.ApplyFromSprite(collider);
 
             var camera = CreateSpriteObject(office, "SecurityCamera", CreateCameraSprite(), new Vector3(1.4f, 0.9f, 0f), 7);
             camera.AddComponent<Deadlight.Level.SearchlightEffect>();
@@ -124,7 +142,7 @@ namespace Deadlight.Level.MapBuilders
 
             var crane = CreateSpriteObject(yard, "Crane", CreateCraneSprite(), new Vector3(0f, 0.3f, 0f), 7);
             var craneCollider = crane.AddComponent<BoxCollider2D>();
-            craneCollider.size = new Vector2(2.2f, 3.4f);
+            MapFootprintCollider.ApplyFromSprite(craneCollider);
 
             CreateSpriteObject(yard, "Container", CreateContainerSprite(), new Vector3(-1.9f, -1.1f, 0f), 5);
             CreateSpriteObject(yard, "Container", CreateContainerSprite(), new Vector3(1.9f, -1.1f, 0f), 5);

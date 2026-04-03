@@ -263,7 +263,7 @@ namespace Deadlight.Narrative
             objectiveText = objTextObj.AddComponent<Text>();
             objectiveText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (objectiveText.font == null)
-                objectiveText.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+                objectiveText.font = Font.CreateDynamicFontFromOSFont("Arial", 16);
             objectiveText.fontSize = 18;
             objectiveText.color = new Color(1f, 0.9f, 0.4f);
             objectiveText.alignment = TextAnchor.MiddleLeft;
